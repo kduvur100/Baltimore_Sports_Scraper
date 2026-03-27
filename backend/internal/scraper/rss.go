@@ -126,7 +126,7 @@ func (s *RSSScraper) fetchFeed(ctx context.Context, src rssSource) ([]models.Art
 			Summary:     item.Description,
 			Source:      models.SourceRSS,
 			Team:        team,
-			Author:      strings.Join(item.Authors.Names(), ", "),
+			Author:      strings.Join(personNames(item.Authors), ", "),
 			ImageURL:    imgURL,
 			PublishedAt: pub,
 		})
@@ -159,11 +159,11 @@ func containsAny(s string, keywords []string) bool {
 	return false
 }
 
-// Helper to get author names from gofeed persons slice
-func (p gofeed.Persons) Names() []string {
-	names := make([]string, 0, len(p))
-	for _, person := range p {
-		if person.Name != "" {
+// personNames extracts display names from a gofeed authors slice
+func personNames(persons []*gofeed.Person) []string {
+	names := make([]string, 0, len(persons))
+	for _, person := range persons {
+		if person != nil && person.Name != "" {
 			names = append(names, person.Name)
 		}
 	}
